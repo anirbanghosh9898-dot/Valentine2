@@ -20,13 +20,14 @@
 
     .card {
       background: #fff;
-      padding: 40px 30px;
+      padding: 40px 30px 50px;
       border-radius: 25px;
       text-align: center;
       width: 90%;
       max-width: 400px;
       box-shadow: 0 20px 40px rgba(255, 105, 180, 0.3);
       animation: popIn 0.8s ease;
+      position: relative;
     }
 
     @keyframes popIn {
@@ -47,7 +48,8 @@
 
     .buttons {
       position: relative;
-      height: 120px;
+      height: 140px;
+      margin-top: 10px;
     }
 
     button {
@@ -57,13 +59,15 @@
       font-size: 18px;
       cursor: pointer;
       position: absolute;
-      transition: transform 0.2s ease;
+      transition: transform 0.2s ease, left 0.25s ease, top 0.25s ease;
+      white-space: nowrap;
     }
 
     #yes {
       background: #ff4d88;
       color: #fff;
-      left: 20%;
+      left: 25%;
+      top: 20px;
     }
 
     #yes:hover {
@@ -74,6 +78,18 @@
       background: #ced4da;
       color: #333;
       left: 55%;
+      top: 20px;
+    }
+
+    .hop {
+      animation: hop 0.35s ease;
+    }
+
+    @keyframes hop {
+      0%   { transform: translateY(0); }
+      30%  { transform: translateY(-12px); }
+      60%  { transform: translateY(4px); }
+      100% { transform: translateY(0); }
     }
 
     .result {
@@ -101,7 +117,7 @@
     <h1>Hey my love 💖</h1>
     <p>Will you be my Valentine? 🌹</p>
 
-    <div class="buttons">
+    <div class="buttons" id="buttons">
       <button id="yes">YES 😍</button>
       <button id="no">NO 🙃</button>
     </div>
@@ -119,15 +135,28 @@
   <script>
     const noBtn = document.getElementById("no");
     const yesBtn = document.getElementById("yes");
+    const buttons = document.getElementById("buttons");
     const result = document.getElementById("result");
     const runSound = document.getElementById("runSound");
     const yesSound = document.getElementById("yesSound");
 
     function moveNoButton() {
-      const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-      const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+      const containerRect = buttons.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+
+      const maxX = containerRect.width - btnRect.width;
+      const maxY = containerRect.height - btnRect.height;
+
+      const x = Math.random() * maxX;
+      const y = Math.random() * maxY;
+
       noBtn.style.left = `${x}px`;
       noBtn.style.top = `${y}px`;
+
+      noBtn.classList.remove('hop');
+      void noBtn.offsetWidth; // reset animation
+      noBtn.classList.add('hop');
+
       runSound.currentTime = 0;
       runSound.play();
     }
@@ -137,8 +166,8 @@
 
     yesBtn.addEventListener("click", () => {
       yesSound.play();
+      buttons.style.display = 'none';
       result.style.display = "block";
-      document.querySelector('.buttons').style.display = 'none';
     });
   </script>
 
